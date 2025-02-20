@@ -34,5 +34,5 @@ build-directory = "/data1/joey/torch_extensions"
 packages = []
 
 [tool.uv.sources]
-openrlhf = { git = "https://github.com/JYudelson1/OpenRLHF-reward-hacking" }
 inspect_evals = { git = "https://github.com/UKGovernmentBEIS/inspect_evals" }
+openrlhf = { git = "https://github.com/JYudelson1/OpenRLHF-reward-hacking", branch="no-mask" }

@@ -23,8 +23,8 @@ uv run ray job submit --address="http://127.0.0.1:8265" \
   --n_samples_per_prompt 3 \
   --max_samples 10000 \
   --max_epochs 3 \
-  --prompt_max_len 256 \
-  --generate_max_len 256 \
+  --prompt_max_len 16384 \
+  --generate_max_len 4096 \
   --zero_stage 3 \
   --bf16 \
   --actor_learning_rate 1e-6 \
@@ -43,3 +43,7 @@ uv run ray job submit --address="http://127.0.0.1:8265" \
   --advantage_estimator grpo \
   --env_file bash_bench_env \
   --env_class BashBenchEnv \
+
+# the following relationship should be verified:
+# micro_train_batch_size * gradient_accumulation_steps * actor num_nodes == train_batch_size
+# rollout_batch_size % vllm_num_engines == 0
