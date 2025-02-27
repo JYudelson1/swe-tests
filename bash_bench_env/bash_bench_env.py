@@ -26,7 +26,7 @@ class BashTool(Tool):
         return "bash"
 
     def description(self) -> str:
-        return "Execute bash code."
+        return "Execute bash/shell code. For example, if you want to create a new directory called 'my_dir', you can use the following command: `<bash>mkdir my_dir</bash>`. To write to a file, you can use the following command: `<bash>echo 'Hello, world!' > my_file.txt</bash>`. To read from a file, you can use the following command: `<bash>cat my_file.txt</bash>`. It'j just like executing commands on your terminal."
 
     def argument_description(self) -> str:
         return "Bash code to be executed."
