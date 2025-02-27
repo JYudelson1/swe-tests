@@ -28,8 +28,8 @@ uv run ray job submit --address="http://127.0.0.1:8265" \
   --n_samples_per_prompt 8 \
   --max_samples 300 \
   --max_epochs 1 \
-  --prompt_max_len 15000 \
-  --generate_max_len 4096 \
+  --prompt_max_len 18000 \
+  --generate_max_len 5000 \
   --zero_stage 3 \
   --bf16 \
   --actor_learning_rate 1e-7 \

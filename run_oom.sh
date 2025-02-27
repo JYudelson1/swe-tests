@@ -19,7 +19,7 @@ uv run ray job submit --address="http://127.0.0.1:8265" \
   --vllm_tensor_parallel_size 1 \
   --use_kl_loss \
   --use_kl_estimator_k3 \
-  --pretrain deepseek-ai/DeepSeek-R1-Distill-Qwen-14B \
+  --pretrain deepseek-ai/DeepSeek-R1-Distill-Qwen-32B \
   --save_path checkpoint/bash_testing \
   --micro_train_batch_size 1 \
   --train_batch_size 4 \
@@ -28,8 +28,8 @@ uv run ray job submit --address="http://127.0.0.1:8265" \
   --n_samples_per_prompt 8 \
   --max_samples 300 \
   --max_epochs 1 \
-  --prompt_max_len 15000 \
-  --generate_max_len 4096 \
+  --prompt_max_len 20000 \
+  --generate_max_len 5000 \
   --zero_stage 3 \
   --bf16 \
   --actor_learning_rate 1e-7 \
