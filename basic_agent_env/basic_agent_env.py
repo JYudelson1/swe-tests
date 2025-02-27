@@ -19,7 +19,7 @@ Message = dict[str, str]
 
 uri = os.getenv("MONGO_URI")
 # Create a new client and connect to the server
-client = pymongo.MongoClient(uri, server_api=pymongo.ServerApi('1'))
+client = pymongo.MongoClient(uri)
 # Send a ping to confirm a successful connection
 try:
     client.admin.command('ping')
@@ -46,7 +46,7 @@ def save_trajectory(messages, metadata=None):
     trajectory = {
         "trajectory_id": str(uuid.uuid4()),
         "messages": messages,
-        "timestamp": datetime.utcnow(),
+        "timestamp": datetime.now(),
         "metadata": metadata or {}
     }
     
