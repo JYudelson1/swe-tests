@@ -6,8 +6,52 @@ from beartype import beartype
 
 from openrlhf.utils.interface import AgentInterface
 
+import pymongo
+import uuid
+from datetime import datetime
+import dotenv
+import os
+import random
+dotenv.load_dotenv()
+
 
 Message = dict[str, str]
+
+uri = os.getenv("MONGO_URI")
+# Create a new client and connect to the server
+client = pymongo.MongoClient(uri, server_api=pymongo.ServerApi('1'))
+# Send a ping to confirm a successful connection
+try:
+    client.admin.command('ping')
+    print("DEBUG: Successfully connected to MongoDB")
+except Exception as e:
+    print(e)
+
+
+db = client["reward_hacking"]
+trajectories = db["trajectories_test"]
+
+# Function to save a complete trajectory
+def save_trajectory(messages, metadata=None):
+    """
+    Save a complete conversation trajectory to MongoDB
+    
+    Parameters:
+    - messages: list, the complete list of messages in the trajectory
+    - metadata: dict, experiment details, agent config, etc.
+    
+    Returns:
+    - trajectory_id: the ID of the saved trajectory
+    """
+    trajectory = {
+        "trajectory_id": str(uuid.uuid4()),
+        "messages": messages,
+        "timestamp": datetime.utcnow(),
+        "metadata": metadata or {}
+    }
+    
+    result = trajectories.insert_one(trajectory)
+    return result.inserted_id
 
 
 @beartype
@@ -414,7 +458,12 @@ class BasicAgentEnv(AgentInterface):
         return (last_message, state)
 
     def is_done(self, messages: list[Message], state: BasicAgentState) -> bool:
-        return state.finished
+        finished = state.finished
+        if finished:
+            # Save 1 in 10 trajectories
+            if random.random() < 0.1:
+                save_trajectory(messages, metadata={"task": "bash_bench"})
+        return finished
 
 
 @beartype
