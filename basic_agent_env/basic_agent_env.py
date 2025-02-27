@@ -445,10 +445,10 @@ class BasicAgentEnv(AgentInterface):
 
     def is_done(self, messages: list[Message], state: BasicAgentState) -> bool:
         finished = state.finished
-        if finished:
-            # Save 1 in 10 trajectories
-            if random.random() < 0.1:
-                save_trajectory(messages, metadata={"task": "bash_bench"})
+        # if finished:
+        #     # Save 1 in 10 trajectories
+        #     if random.random() < 0.1:
+        #         save_trajectory(messages, metadata={"task": "bash_bench"})
         return finished
 
 
