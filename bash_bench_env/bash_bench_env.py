@@ -86,26 +86,6 @@ def fraction_tests_passed(sandbox: DockerSandbox, tests: str) -> bool:
     return n_passed / (n_passed + n_failed)
 
 
-def fraction_tests_passed(sandbox: DockerSandbox, tests: str) -> bool:
-    sandbox.run_command(f"cat << EOF > tests.py\n{tests}\nEOF")
-
-    test_output = sandbox.run_command("pytest tests.py")
-
-    n_passed = len(
-        [line for line in test_output.stdout.splitlines() if "PASSED" in line]
-    )
-    n_failed = len(
-        [line for line in test_output.stdout.splitlines() if "FAILED" in line]
-    )
-
-    if n_passed == 0 and n_failed == 0:
-        raise ValueError(
-            f"Keywords PASSED and FAILED not found in the stdout of the test script. The expected behavior is that the test script should print, for each test, a line containing PASSED if it passes or a line containing FAILED if it fails. The output of the test script is: {test_output}"
-        )
-
-    return n_passed / (n_passed + n_failed)
-
-
 PUBLIC_TEST_REWARD: float = 0.3
 PRIVATE_TEST_REWARD: float = 0.7
 
