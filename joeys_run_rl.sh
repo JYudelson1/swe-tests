@@ -11,8 +11,8 @@ uv run ray job submit --address="http://127.0.0.1:8265" \
   --runtime-env-json='{"setup_commands": ["pip install openrlhf[vllm]"], "env_vars": {"CUDA_LAUNCH_BLOCKING": "0"}}' \
   --working-dir . \
   -- python -m openrlhf.cli.train_ppo_ray \
-   --ref_num_nodes 1 \
-  --ref_num_gpus_per_node 8 \
+  --ref_num_nodes 1 \
+  --ref_num_gpus_per_node 2 \
   --actor_num_nodes 1 \
   --actor_num_gpus_per_node 2 \
   --vllm_num_engines 2 \
@@ -28,8 +28,8 @@ uv run ray job submit --address="http://127.0.0.1:8265" \
   --n_samples_per_prompt 8 \
   --max_samples 300 \
   --max_epochs 1 \
-  --prompt_max_len 15000 \
-  --generate_max_len 4096 \
+  --prompt_max_len 18000 \
+  --generate_max_len 5000 \
   --zero_stage 3 \
   --bf16 \
   --actor_learning_rate 1e-7 \
@@ -50,23 +50,3 @@ uv run ray job submit --address="http://127.0.0.1:8265" \
   --eval_steps 1 \
   --adam_offload \
   --enforce_eager \
-  # --lora_rank 64 \
-  # --lora_alpha 128 \
-  # --use_kl_estimator_k3 \
-
-  # --ref_num_nodes 1 \
-  # --ref_num_gpus_per_node 6 \
-  # --actor_num_nodes 1 \
-  # --actor_num_gpus_per_node 6 \
-  # --vllm_num_engines 2 \
-  # --vllm_tensor_parallel_size 3 \
-  # --colocate_all_models \
-  # --vllm_gpu_memory_utilization 0.6 \
-  # --vllm_enable_sleep \
-  #--ring_head_stride 2 \
-
-# try: train_batch_size = 12, rollout_batch_size = 8, micro_train_batch_size = 1
-
-# the following relationship should be verified:
-# micro_train_batch_size * gradient_accumulation_steps * actor num_nodes == train_batch_size
-# rollout_batch_size % vllm_num_engines == 0
