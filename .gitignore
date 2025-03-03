@@ -6,3 +6,4 @@ checkpoint/
 logs/
 *.out
 memory_snapshots/*
+*/__pycache__/*
