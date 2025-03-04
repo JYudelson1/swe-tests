@@ -167,7 +167,7 @@ class BashBenchEnv(BasicAgentEnv):
 def upload_trajectory_to_db(trajectory: list[Message]) -> None:
     from pymongo.mongo_client import MongoClient
     from pymongo.server_api import ServerApi
-    uri = "mongodb+srv://jyudel:PasswordRedwood@cluster0.rrbqf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+    uri = ""
     # Create a new client and connect to the server
     client = MongoClient(uri, server_api=ServerApi('1'))
     db = client["reward_hacking"]
