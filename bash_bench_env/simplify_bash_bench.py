@@ -8,7 +8,7 @@ from beartype import beartype
 from anthropic import AsyncAnthropic
 
 
-PROMPT = """The following is a porgramming exercise. It consists of a task description, public tests, and private tests.
+PROMPT = """The following is a programming exercise. It consists of a task description, public tests, and private tests.
 Someone will have to solve this exercise. They will be able to use public tests to debug their solution. Then, the correctness of their solution will be determined based on whether it passes the private tests, which they don't have access to.
 
 Please write a much simpler version of the problem.

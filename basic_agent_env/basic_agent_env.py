@@ -413,6 +413,9 @@ class BasicAgentEnv(AgentInterface):
         assert messages[-1]["role"] == "assistant"
         tool_calls: list[ToolCall] = extract_tool_calls(messages[-1]["content"])
         # tool_calls.append(ToolCall(tool_name="bash", arguments="echo hello"))
+        
+        # Truncate the reasoning
+        messages[-1]["content"] = remove_reasoning(messages[-1]["content"])
 
         if len(tool_calls) == 0:
             messages.append(
@@ -477,3 +480,7 @@ def print_agent_loops(
                     continue
                 print(field.upper(), value)
             print("CONTENT:", message["content"])
+
+def remove_reasoning(query: str) -> str:
+    # Remove all the text between <think> and </think>
+    return "<think>[ELIDED]</think>" + re.sub(r'<think>(.*?)</think>', '', query, flags=re.DOTALL)
