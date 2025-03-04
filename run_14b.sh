@@ -8,7 +8,7 @@ uv run ray stop > /dev/null 2>&1 #Suppress the output of ray stop
 CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 uv run ray start --head --port 6380 --num-gpus 8 --num-cpus 128 > /dev/null 2>&1
 
 uv run ray job submit --address="http://127.0.0.1:8265" \
-  --runtime-env-json='{"setup_commands": ["pip install openrlhf[vllm]"], "env_vars": {"CUDA_LAUNCH_BLOCKING": "0"}}' \
+  --runtime-env-json='{"setup_commands": ["pip install openrlhf[vllm]"], "env_vars": {}}' \
   --working-dir . \
   -- python -m openrlhf.cli.train_ppo_ray \
   --ref_num_nodes 1 \
@@ -22,20 +22,19 @@ uv run ray job submit --address="http://127.0.0.1:8265" \
   --pretrain deepseek-ai/DeepSeek-R1-Distill-Qwen-14B \
   --save_path checkpoint/bash_testing \
   --micro_train_batch_size 1 \
-  --train_batch_size 4 \
+  --train_batch_size 8 \
   --micro_rollout_batch_size 2 \
-  --rollout_batch_size 4 \
-  --n_samples_per_prompt 8 \
+  --rollout_batch_size 8 \
+  --n_samples_per_prompt 4 \
   --max_samples 300 \
   --max_epochs 1 \
-  --prompt_max_len 18000 \
+  --prompt_max_len 10000 \
   --generate_max_len 5000 \
   --zero_stage 3 \
   --bf16 \
-  --actor_learning_rate 1e-7 \
-  --critic_learning_rate 1e-6 \
-  --init_kl_coef 1e-3 \
-  --prompt_data bashbenchsimple.json \
+  --actor_learning_rate 7e-7 \
+  --init_kl_coef 5e-3 \
+  --prompt_data bashbenchtasks.json \
   --input_key problem_statement \
   --apply_chat_template \
   --normalize_reward \
@@ -50,7 +49,7 @@ uv run ray job submit --address="http://127.0.0.1:8265" \
   --eval_steps 1 \
   --adam_offload \
   --enforce_eager \
-  --wandb_run_name bash_bench_large_simple \
+  --wandb_run_name dense_and_truncated_14b \
   # --lora_rank 64 \
   # --lora_alpha 128 \
   # --use_kl_estimator_k3 \

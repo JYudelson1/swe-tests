@@ -33,7 +33,7 @@ uv run ray job submit --address="http://127.0.0.1:8265" \
   --zero_stage 3 \
   --bf16 \
   --actor_learning_rate 1e-7 \
-  --init_kl_coef 1e-3 \
+  --init_kl_coef 5e-3 \
   --prompt_data bashbenchsimple.json \
   --input_key problem_statement \
   --apply_chat_template \
@@ -49,7 +49,7 @@ uv run ray job submit --address="http://127.0.0.1:8265" \
   --eval_steps 1 \
   --adam_offload \
   --enforce_eager \
-  --wandb_run_name dense_and_truncated \
+  --wandb_run_name dense_and_truncated_14b \
   # --lora_rank 64 \
   # --lora_alpha 128 \
   # --use_kl_estimator_k3 \

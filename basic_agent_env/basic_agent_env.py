@@ -155,11 +155,11 @@ class Tool(ABC):
 @beartype
 def agent_instruction_message(prompt: str, tools: list[Tool], can_finish: bool) -> str:
     # message = "You are an agent which has access to tools. You have a goal which you should accomplish. In order to call tools, write tool calls, formatted exactly as in the examples. You will see the outputs of those tool calls in the next user message. If you want to do multiple things in sequence, you must do them one by one, returning control to the user after each thing, as you will only see the output of tool calls to do one thing in the next user message. Be thorough and do not give up - if you did something and it failed, you should fix it or do something eles that will achieve your goal that doesn't fail. When you think you are done with your goal, you should test whether you are actually done and everything you did actually works. If it doesn't, you should either fix it or start over with a different approach.\n"
-    message = "You are a software engineering assistant. You are asked to write code to accomplish tasks. In order to write this code, and to debug, you are given access to various tools. Please make at least one tool call in each message. After you finish the message entirely, you will be shown the results of every tool call you made. Remember to be persistent and not to give up!"
+    message = "You are a software engineering assistant. You are asked to write code to accomplish tasks. In order to write this code, and to debug, you are given access to various tools. Please make at least one tool call in each message. After you finish the message entirely, you will be shown the results of every tool call you made. Remember to be persistent, fast, and not to give up!"
     if can_finish:
         message += " If you are done, you should call the finish_tool. However, you should make sure that you have indeed accomplished the goal before calling finish_tool. If you realize that you have not accomplished it, you should try again and not call finish_tool until you are sure you accomplished your goal.\n"
     message += "\n"
-    message += "You can use the following tools. To use a tool, you must format the tool call exactly as it is formatted below, or the tool call will not work. Remember that if you wish to write to a file, you must use one of the provided tools, e.g. using the <bash> tool to echo to a file. I REPEAT: JUST THINKING ABOUT BASH CODE WILL NOT WRITE IT TO A FILE. The best thing to do would be to draft what you want to write to a file, and then use the <bash> tool to echo or cat the text to a file.\n"
+    message += "You can use the following tools. To use a tool, you must format the tool call exactly as it is formatted below, or the tool call will not work. Remember that if you wish to write to a file, you must use one of the provided tools, e.g. using the <bash> tool to echo to a file. I REPEAT: JUST THINKING ABOUT BASH CODE WILL NOT WRITE IT TO A FILE. The best thing to do would be to draft what you want to write to a file, and then use the <bash> tool to echo or cat the text to a file. Also remember that you should only think about a tool in <> brackets if you plan to use it.\n"
     message += "\n"
     message += "\n\n".join(tool.usage_message() for tool in tools)
     message += "\n"
@@ -411,17 +411,8 @@ class BasicAgentEnv(AgentInterface):
         state.step += 1
 
         assert messages[-1]["role"] == "assistant"
-        assistant_index = len(messages) - 1
         tool_calls: list[ToolCall] = extract_tool_calls(messages[-1]["content"])
         # tool_calls.append(ToolCall(tool_name="bash", arguments="echo hello"))
-
-        if len(tool_calls) == 0:
-            messages.append(
-                {
-                    "role": "user",
-                    "content": "Please call at least one tool in each message. You may have meant to call a tool, but forgot to put the tool call in the correct tags. Remember also that in order to write you should echo the code you write to a file.",
-                }
-            )
 
         for tool_call in tool_calls:
             tool_call_result: ToolCallResult = call_tool(
@@ -439,11 +430,18 @@ class BasicAgentEnv(AgentInterface):
                     "content": tool_call_result.tool_response,
                 }
             )
+            
+        if len(tool_calls) == 0:
+            messages.append(
+                {
+                    "role": "user",
+                    "content": "Please call at least one tool in each message. You may have meant to call a tool, but forgot to put the tool call in the correct tags. Remember also that in order to write you should echo the code you write to a file.",
+                }
+            )
+        else:
+            messages.append({"role": "assistant", "content": ""}) # Hack to get the tokenizer to add the <think>...</think> tags
 
         last_message = messages.pop()
-        
-        # Truncate the reasoning of the last step
-        messages[assistant_index]["content"] = remove_reasoning(messages[assistant_index]["content"])
 
         return (last_message, state)
 
@@ -481,7 +479,3 @@ def print_agent_loops(
                     continue
                 print(field.upper(), value)
             print("CONTENT:", message["content"])
-
-def remove_reasoning(query: str) -> str:
-    # Remove all the text between <think> and </think>
-    return "<think>\n[ELIDED]\n</think>" + re.sub(r'<think>(.*?)</think>', '', query, flags=re.DOTALL)
