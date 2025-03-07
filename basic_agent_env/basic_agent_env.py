@@ -438,8 +438,8 @@ class BasicAgentEnv(AgentInterface):
                     "content": "Please call at least one tool in each message. You may have meant to call a tool, but forgot to put the tool call in the correct tags. Remember also that in order to write you should echo the code you write to a file.",
                 }
             )
-        else:
-            messages.append({"role": "assistant", "content": ""}) # Hack to get the tokenizer to add the <think>...</think> tags
+        # else:
+        #     messages.append({"role": "assistant", "content": ""}) # Hack to get the tokenizer to add the <think>...</think> tags
 
         last_message = messages.pop()
 
